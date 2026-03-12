@@ -1,0 +1,45 @@
+Attempting to require ./.prisma/client directly...
+Client path: Z:\installer\robs-backend\node_modules\.prisma\client
+index.js exists at client path.
+Successfully required PrismaClient directly.
+CRASH: `PrismaClient` needs to be constructed with a non-empty, valid `PrismaClientOptions`:
+
+```
+new PrismaClient({
+  ...
+})
+```
+
+or
+
+```
+constructor() {
+  super({ ... });
+}
+```
+          
+PrismaClientInitializationError: `PrismaClient` needs to be constructed with a non-empty, valid `PrismaClientOptions`:
+
+```
+new PrismaClient({
+  ...
+})
+```
+
+or
+
+```
+constructor() {
+  super({ ... });
+}
+```
+          
+    at new t (Z:\installer\robs-backend\node_modules\@prisma\client\runtime\client.js:70:960)
+    at Object.<anonymous> (Z:\installer\robs-backend\test-prisma-direct.js:25:20)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
+    at node:internal/main/run_main_module:28:49
+DONE 

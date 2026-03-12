@@ -1,0 +1,23 @@
+{
+    "name": "restaurant-management-system-monorepo",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Monorepo root for Restaurant Management System",
+    "workspaces": [
+        "robs-backend",
+        "robs-frontend"
+    ],
+    "scripts": {
+        "install:all": "npm install",
+        "setup-env": "node scripts/setup-envs.js",
+        "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,magenta\" \"npm run dev --workspace=robs-backend\" \"npm run dev --workspace=robs-frontend\"",
+        "installer": "node scripts/setup.js",
+        "clean": "rimraf node_modules **/node_modules package-lock.json **/package-lock.json"
+    },
+    "devDependencies": {
+        "@prisma/client": "5.15.0",
+        "concurrently": "^8.2.2",
+        "prisma": "5.15.0",
+        "rimraf": "^6.0.0"
+    }
+}

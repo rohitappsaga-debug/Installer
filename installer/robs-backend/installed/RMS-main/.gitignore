@@ -1,0 +1,123 @@
+# =============================================================
+# RMS Project .gitignore
+# Stack: Node.js · TypeScript · React · Vite · Prisma · Jest
+# =============================================================
+
+# ──────────────────────────────────────────────────────────────
+# Dependencies
+# ──────────────────────────────────────────────────────────────
+node_modules/
+node_modules_bak/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# ──────────────────────────────────────────────────────────────
+# Environment Variables  (keep .env.example files)
+# ──────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.bak
+*.env.bak
+
+# ──────────────────────────────────────────────────────────────
+# Build Output
+# ──────────────────────────────────────────────────────────────
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+*.tsbuildinfo
+
+# ──────────────────────────────────────────────────────────────
+# TypeScript
+# ──────────────────────────────────────────────────────────────
+*.js.map
+*.d.ts.map
+
+# ──────────────────────────────────────────────────────────────
+# Prisma
+# ──────────────────────────────────────────────────────────────
+# Keep: prisma/schema.prisma, prisma/migrations/
+# Ignore generated client (regenerated via `prisma generate`)
+robs-backend/src/generated/
+prisma/dev.db
+prisma/dev.db-journal
+*.db
+*.db-journal
+*.sqlite
+*.sqlite-journal
+
+# ──────────────────────────────────────────────────────────────
+# Logs
+# ──────────────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+debug.log
+
+# ──────────────────────────────────────────────────────────────
+# Testing & Coverage
+# ──────────────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+*.lcov
+jest-results/
+test-results/
+
+# ──────────────────────────────────────────────────────────────
+# Vite / Frontend Dev
+# ──────────────────────────────────────────────────────────────
+robs-frontend/dist/
+robs-frontend/.vite/
+
+# ──────────────────────────────────────────────────────────────
+# Installer UI Build
+# ──────────────────────────────────────────────────────────────
+robs-backend/installer-ui/dist/
+robs-backend/installer-ui/node_modules/
+
+# ──────────────────────────────────────────────────────────────
+# OS & Editor Artifacts
+# ──────────────────────────────────────────────────────────────
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# VSCode
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# ──────────────────────────────────────────────────────────────
+# Misc / Project-Specific
+# ──────────────────────────────────────────────────────────────
+.artifacts/
+.admin-setup.json
+query
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo

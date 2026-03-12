@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Receipt</title>
+    <!-- Use Courier Prime for receipt-like monospace font -->
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Courier Prime', monospace;
+            font-size: 12px;
+            line-height: 1.2;
+            color: #000;
+            background-color: #fff;
+        }
+
+        /* Screen Preview Mode */
+        @media screen {
+            body {
+                background-color: #e5e7eb;
+                display: flex;
+                justify-content: center;
+                padding: 20px;
+            }
+
+            .receipt {
+                box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+                margin-bottom: 20px;
+            }
+
+            .no-print {
+                display: block;
+                margin-bottom: 1rem;
+                text-align: center;
+            }
+
+            .btn-print {
+                background-color: #000;
+                color: #fff;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-family: sans-serif;
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .btn-print:hover {
+                background-color: #333;
+            }
+        }
+
+        /* Essential Print Styles */
+        @media print {
+            @page {
+                margin: 0;
+                size: 80mm auto;
+                /* Critical for thermal printers */
+            }
+
+            body {
+                background-color: #fff;
+                margin: 0;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .receipt {
+                box-shadow: none;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+        }
+
+        /* Receipt Container - Locked to 80mm Width */
+        .receipt {
+            background-color: #fff;
+            width: 80mm;
+            padding: 5mm;
+            /* Inner padding for safe printing area */
+            margin: 0 auto;
+        }
+
+        /* Typography & Layout Utilities */
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .underline {
+            text-decoration: underline;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .items-start {
+            align-items: flex-start;
+        }
+
+        .mb-1 {
+            margin-bottom: 2px;
+        }
+
+        .mb-2 {
+            margin-bottom: 4px;
+        }
+
+        .mb-4 {
+            margin-bottom: 8px;
+        }
+
+        .mt-1 {
+            margin-top: 2px;
+        }
+
+        .mt-2 {
+            margin-top: 4px;
+        }
+
+        .mt-4 {
+            margin-top: 8px;
+        }
+
+        .mt-6 {
+            margin-top: 12px;
+        }
+
+        .py-1 {
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+
+        .pb-1 {
+            padding-bottom: 2px;
+        }
+
+        /* Text Sizes */
+        .text-xs {
+            font-size: 10px;
+        }
+
+        .text-sm {
+            font-size: 11px;
+        }
+
+        .text-base {
+            font-size: 12px;
+        }
+
+        .text-lg {
+            font-size: 14px;
+        }
+
+        .text-xl {
+            font-size: 16px;
+        }
+
+        /* Separators */
+        .border-dashed {
+            border-top: 1px dashed #000;
+            width: 100%;
+            margin: 4px 0;
+        }
+
+        /* Grid Columns for Items */
+        .col-desc {
+            width: 45%;
+            padding-right: 4px;
+            overflow-wrap: break-word;
+        }
+
+        .col-qty {
+            width: 15%;
+            text-align: right;
+        }
+
+        .col-rate {
+            width: 20%;
+            text-align: right;
+        }
+
+        .col-amt {
+            width: 20%;
+            text-align: right;
+        }
+
+        /* Footer small print */
+        .footer-credit {
+            font-size: 9px;
+            opacity: 0.6;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <!-- Print Control -->
+        <div class="no-print">
+            <button class="btn-print" onclick="window.print()">Print Receipt</button>
+            <div style="margin-top: 8px; font-family: sans-serif; font-size: 12px; color: #666;">
+                Auto-print enabled (check console)
+            </div>
+        </div>
+
+        <!-- Receipt Content -->
+        <div class="receipt" id="receipt-content">
+            <!-- Header Section -->
+            <div class="text-center mb-4">
+                <div class="font-bold text-sm mb-2">*** DUPLICATE ***</div>
+                <div class="font-bold text-xl mb-1" id="restaurant-name">RESTAURANT NAME</div>
+                <div class="text-xs mb-1" id="restaurant-address">123 Street, City, ZIP</div>
+                <div class="text-xs" id="gst-info">GSTIN: XXXXXXXXXX</div>
+                <div class="font-bold mt-4 underline">TAX INVOICE</div>
+            </div>
+
+            <!-- Meta Info -->
+            <div class="flex justify-between mt-2">
+                <span>BILL NO.: <span id="bill-no">0000</span></span>
+                <span>DATE: <span id="bill-date">--/--/--</span></span>
+            </div>
+            <div class="flex justify-between">
+                <span>T. NO.: <span id="table-no">--</span></span>
+                <span>W. NO.: <span id="waiter-no">--</span></span>
+            </div>
+
+            <div class="border-dashed"></div>
+
+            <!-- Items Header -->
+            <div class="flex font-bold pb-1 text-xs">
+                <div class="col-desc">DESCRIPTION</div>
+                <div class="col-qty">QTY</div>
+                <div class="col-rate">RATE</div>
+                <div class="col-amt">AMT</div>
+            </div>
+
+            <div class="border-dashed"></div>
+
+            <!-- Items Container -->
+            <div id="items-list" class="py-1">
+                <!-- Dynamic Items will be injected here -->
+            </div>
+
+            <div class="border-dashed"></div>
+
+            <!-- Totals Section -->
+            <div class="py-1">
+                <div class="flex justify-between font-bold">
+                    <span>SUB TOTAL :</span>
+                    <span id="sub-total">0.00</span>
+                </div>
+
+                <div id="discount-row" class="flex justify-between" style="display: none;">
+                    <span>DISCOUNT :</span>
+                    <span id="discount-amount">-0.00</span>
+                </div>
+
+                <div id="tax-containers">
+                    <!-- Dynamic Tax Rows -->
+                </div>
+            </div>
+
+            <div class="border-dashed"></div>
+
+            <!-- Grand Total -->
+            <div class="flex justify-between mt-2 mb-2 font-bold text-lg">
+                <span>NET TOTAL:</span>
+                <span id="grand-total">0.00</span>
+            </div>
+
+            <div class="border-dashed"></div>
+
+            <!-- Footer -->
+            <div class="text-center mt-6">
+                <div class="text-xs">(TIME: <span id="bill-time">--:--</span>)</div>
+                <div class="font-bold mt-2">THANK YOU! VISIT AGAIN</div>
+                <div class="footer-credit">*** POWERED BY RECEIPTPRO POS ***</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic Script -->
+    <script>
+        // Example Dynamic Data Object
+        const receiptData = {
+            restaurant: {
+                name: "FOOD INN FINE DINE",
+                address: "GF-1, MOHINI II, OPP. GANDHIGRAM\nRAILWAY STATION\nASHRAM ROAD, AHMEDABAD-380009",
+                gst: "24AALFP2201K1ZG",
+                phone: "079-65841110"
+            },
+            bill: {
+                no: "38391",
+                date: "20/11/2023",
+                time: "02:33 PM",
+                table: "10",
+                waiter: "03",
+                currency: "RS."
+            },
+            items: [
+                { name: "VEG SPRING ROLL", qty: 1, rate: 180.00, amount: 180.00 },
+                { name: "VEG DIWANI HANDI", qty: 1, rate: 280.00, amount: 280.00 },
+                { name: "PANEER MULTANI", qty: 1, rate: 220.00, amount: 220.00 },
+                { name: "ROOMALI ROTI", qty: 3, rate: 45.00, amount: 135.00 },
+                { name: "FRESH LIME WATER", qty: 2, rate: 30.00, amount: 60.00 }
+            ],
+            totals: {
+                subTotal: 875.00,
+                discount: 0,
+                taxes: [
+                    { name: "CGST", rate: "2.5%", amount: 21.88 },
+                    { name: "SGST", rate: "2.5%", amount: 21.88 }
+                ],
+                grandTotal: 962.51,
+                serviceCharge: { rate: "5%", amount: 43.75 }
+            }
+        };
+
+        // Render Function
+        function renderReceipt(data) {
+            // Header
+            document.getElementById('restaurant-name').textContent = data.restaurant.name;
+            document.getElementById('restaurant-address').textContent = data.restaurant.address; // TextContent preserves newlines if white-space: pre-wrap
+            document.getElementById('restaurant-address').style.whiteSpace = 'pre-wrap';
+            document.getElementById('gst-info').textContent = "GSTIN: " + data.restaurant.gst;
+
+            // Bill Info
+            document.getElementById('bill-no').textContent = data.bill.no;
+            document.getElementById('bill-date').textContent = data.bill.date;
+            document.getElementById('bill-time').textContent = data.bill.time;
+            document.getElementById('table-no').textContent = data.bill.table;
+            document.getElementById('waiter-no').textContent = data.bill.waiter;
+
+            // Items
+            const itemsContainer = document.getElementById('items-list');
+            itemsContainer.innerHTML = '';
+            data.items.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'flex items-start mb-1';
+                row.innerHTML = `
+                    <div class="col-desc">${item.name}</div>
+                    <div class="col-qty">${item.qty}</div>
+                    <div class="col-rate">${item.rate.toFixed(2)}</div>
+                    <div class="col-amt">${item.amount.toFixed(2)}</div>
+                `;
+                itemsContainer.appendChild(row);
+            });
+
+            // Totals
+            document.getElementById('sub-total').textContent = data.totals.subTotal.toFixed(2);
+
+            // Discount
+            const discountRow = document.getElementById('discount-row');
+            if (data.totals.discount > 0) {
+                discountRow.style.display = 'flex';
+                document.getElementById('discount-amount').textContent = '-' + data.totals.discount.toFixed(2);
+            }
+
+            // Taxes & Charges
+            const taxContainer = document.getElementById('tax-containers');
+            taxContainer.innerHTML = '';
+
+            // Render Taxes
+            data.totals.taxes.forEach(tax => {
+                const row = document.createElement('div');
+                row.className = 'flex justify-between';
+                row.innerHTML = `<span>${tax.name} @ ${tax.rate} :</span><span>${tax.amount.toFixed(2)}</span>`;
+                taxContainer.appendChild(row);
+            });
+
+            // Service Charge if any
+            if (data.totals.serviceCharge && data.totals.serviceCharge.amount > 0) {
+                const row = document.createElement('div');
+                row.className = 'flex justify-between';
+                row.innerHTML = `<span>SERVICE CHARGE @ ${data.totals.serviceCharge.rate} :</span><span>${data.totals.serviceCharge.amount.toFixed(2)}</span>`;
+                taxContainer.appendChild(row);
+            }
+
+            // Grand Total
+            document.getElementById('grand-total').textContent = data.bill.currency + " " + data.totals.grandTotal.toFixed(2);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderReceipt(receiptData);
+
+            // Auto-print logic
+            if (window.location.search.includes('autoprint=true')) {
+                setTimeout(() => window.print(), 500);
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,340 @@
+import { User, Table, MenuItem, Order, OrderItem, Notification, Settings, DailySales } from '../types';
+
+// Mock Users
+export const mockUsers: User[] = [
+  { id: '1', name: 'John Doe', email: 'john@restaurant.com', role: 'waiter', active: true },
+  { id: '2', name: 'Jane Smith', email: 'jane@restaurant.com', role: 'admin', active: true },
+  { id: '3', name: 'Mike Johnson', email: 'mike@restaurant.com', role: 'kitchen', active: true },
+  { id: '4', name: 'Sarah Williams', email: 'sarah@restaurant.com', role: 'waiter', active: true },
+];
+
+// Mock Tables
+export const mockTables: Table[] = [
+  { id: 't1', number: 1, capacity: 2, status: 'free' },
+  { id: 't2', number: 2, capacity: 4, status: 'free' },
+  { id: 't3', number: 3, capacity: 4, status: 'free' },
+  { id: 't4', number: 4, capacity: 6, status: 'free' },
+  { id: 't5', number: 5, capacity: 2, status: 'free' },
+  { id: 't6', number: 6, capacity: 4, status: 'free' },
+  { id: 't7', number: 7, capacity: 8, status: 'free' },
+  { id: 't8', number: 8, capacity: 2, status: 'free' },
+  { id: 't9', number: 9, capacity: 4, status: 'free' },
+  { id: 't10', number: 10, capacity: 6, status: 'free' },
+];
+
+// Mock Menu Items
+export const mockMenuItems: MenuItem[] = [
+  {
+    id: '550e8400-e29b-41d4-a716-446655440000',
+    name: 'Margherita Pizza',
+    category: 'Pizza',
+    price: 299,
+    description: 'Classic tomato and mozzarella',
+    available: true,
+    preparationTime: 15,
+    isVeg: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440001',
+    name: 'Pepperoni Pizza',
+    category: 'Pizza',
+    price: 399,
+    description: 'Loaded with pepperoni',
+    available: true,
+    preparationTime: 15,
+    isVeg: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440002',
+    name: 'Caesar Salad',
+    category: 'Salads',
+    price: 199,
+    description: 'Fresh romaine lettuce with Caesar dressing',
+    available: true,
+    preparationTime: 10,
+    isVeg: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440003',
+    name: 'Chicken Burger',
+    category: 'Burgers',
+    price: 249,
+    description: 'Grilled chicken with special sauce',
+    available: true,
+    preparationTime: 12,
+    isVeg: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440004',
+    name: 'Veg Burger',
+    category: 'Burgers',
+    price: 199,
+    description: 'Veggie patty with fresh vegetables',
+    available: true,
+    preparationTime: 10,
+    isVeg: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440005',
+    name: 'Pasta Carbonara',
+    category: 'Pasta',
+    price: 349,
+    description: 'Creamy pasta with bacon',
+    available: true,
+    preparationTime: 18,
+    isVeg: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440006',
+    name: 'Grilled Chicken',
+    category: 'Mains',
+    price: 449,
+    description: 'Tender grilled chicken with herbs',
+    available: true,
+    preparationTime: 20,
+    isVeg: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440007',
+    name: 'Fish & Chips',
+    category: 'Mains',
+    price: 399,
+    description: 'Crispy fried fish with fries',
+    available: true,
+    preparationTime: 15,
+    isVeg: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440008',
+    name: 'Chocolate Brownie',
+    category: 'Desserts',
+    price: 149,
+    description: 'Warm chocolate brownie with ice cream',
+    available: true,
+    preparationTime: 8,
+    isVeg: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440009',
+    name: 'Tiramisu',
+    category: 'Desserts',
+    price: 199,
+    description: 'Classic Italian dessert',
+    available: true,
+    preparationTime: 5,
+    isVeg: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440010',
+    name: 'Coke',
+    category: 'Beverages',
+    price: 49,
+    description: 'Chilled soft drink',
+    available: true,
+    preparationTime: 2,
+    isVeg: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: '550e8400-e29b-41d4-a716-446655440011',
+    name: 'Fresh Orange Juice',
+    category: 'Beverages',
+    price: 99,
+    description: 'Freshly squeezed orange juice',
+    available: true,
+    preparationTime: 5,
+    isVeg: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
+
+// Mock Orders
+export const mockOrders: Order[] = [
+  {
+    id: 'o1',
+    orderNumber: 1,
+    tableNumber: 2,
+    items: [
+      {
+        id: 'oi1',
+        menuItem: mockMenuItems[0],
+        quantity: 2,
+        status: 'preparing',
+      },
+      {
+        id: 'oi2',
+        menuItem: mockMenuItems[10],
+        quantity: 2,
+        status: 'ready',
+      },
+    ],
+    status: 'preparing',
+    createdAt: new Date().toISOString(),
+    createdBy: 'John Doe',
+    total: 696,
+    isPaid: false,
+    holdStatus: false,
+  },
+  {
+    id: 'o2',
+    orderNumber: 2,
+    tableNumber: 5,
+    items: [
+      {
+        id: 'oi3',
+        menuItem: mockMenuItems[3],
+        quantity: 1,
+        status: 'ready',
+      },
+      {
+        id: 'oi4',
+        menuItem: mockMenuItems[11],
+        quantity: 1,
+        status: 'ready',
+      },
+    ],
+    status: 'ready',
+    createdAt: new Date(Date.now() - 600000).toISOString(),
+    createdBy: 'Sarah Williams',
+    total: 348,
+    isPaid: false,
+    holdStatus: false,
+  },
+  {
+    id: 'o3',
+    orderNumber: 3,
+    tableNumber: 9,
+    items: [
+      {
+        id: 'oi5',
+        menuItem: mockMenuItems[6],
+        quantity: 1,
+        status: 'pending',
+      },
+      {
+        id: 'oi6',
+        menuItem: mockMenuItems[2],
+        quantity: 1,
+        status: 'pending',
+      },
+    ],
+    status: 'pending',
+    createdAt: new Date(Date.now() - 120000).toISOString(),
+    createdBy: 'John Doe',
+    total: 648,
+    isPaid: false,
+    holdStatus: false,
+  },
+];
+
+// Mock Notifications
+export const mockNotifications: Notification[] = [
+  {
+    id: 'n1',
+    type: 'order',
+    message: 'Table 5 order is ready',
+    timestamp: new Date(Date.now() - 300000).toISOString(),
+    read: false,
+  },
+  {
+    id: 'n2',
+    type: 'payment',
+    message: 'Payment received for Table 8',
+    timestamp: new Date(Date.now() - 600000).toISOString(),
+    read: true,
+  },
+  {
+    id: 'n3',
+    type: 'alert',
+    message: 'Low stock alert: Chicken',
+    timestamp: new Date(Date.now() - 900000).toISOString(),
+    read: false,
+  },
+];
+
+// Mock Settings
+export const mockSettings: Settings = {
+  taxRate: 5,
+  taxEnabled: true,
+  currency: '₹',
+  restaurantName: 'Restaurant Management System',
+  discountPresets: [5, 10, 15, 20],
+  printerConfig: {
+    enabled: true,
+    printerName: 'Kitchen Printer 1',
+  },
+  enabledPaymentMethods: ['cash', 'card', 'upi'],
+  receiptFooter: 'Thank you for your visit!',
+  reservationGracePeriod: 15,
+};
+
+// Mock Daily Sales
+export const mockDailySales: DailySales[] = [
+  {
+    date: '2025-10-10',
+    totalSales: 15420,
+    totalOrders: 42,
+    averageOrderValue: 367,
+  },
+  {
+    date: '2025-10-09',
+    totalSales: 18230,
+    totalOrders: 51,
+    averageOrderValue: 357,
+  },
+  {
+    date: '2025-10-08',
+    totalSales: 16890,
+    totalOrders: 48,
+    averageOrderValue: 352,
+  },
+  {
+    date: '2025-10-07',
+    totalSales: 14560,
+    totalOrders: 39,
+    averageOrderValue: 373,
+  },
+  {
+    date: '2025-10-06',
+    totalSales: 13240,
+    totalOrders: 36,
+    averageOrderValue: 368,
+  },
+  {
+    date: '2025-10-05',
+    totalSales: 12890,
+    totalOrders: 35,
+    averageOrderValue: 368,
+  },
+  {
+    date: '2025-10-04',
+    totalSales: 19450,
+    totalOrders: 56,
+    averageOrderValue: 347,
+  },
+];
+
+// Categories
+export const categories = ['All', 'Pizza', 'Burgers', 'Pasta', 'Mains', 'Salads', 'Desserts', 'Beverages'];

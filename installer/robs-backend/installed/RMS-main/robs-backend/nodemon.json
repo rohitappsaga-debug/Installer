@@ -1,0 +1,16 @@
+{
+    "watch": [
+        "src",
+        ".env"
+    ],
+    "ext": "ts,json",
+    "ignore": [
+        "src/**/*.test.ts",
+        "src/**/*.spec.ts",
+        "node_modules",
+        "dist"
+    ],
+    "exec": "npx ts-node -r tsconfig-paths/register src/index.ts",
+    "legacyWatch": true,
+    "signal": "SIGINT"
+}

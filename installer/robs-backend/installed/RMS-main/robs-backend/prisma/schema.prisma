@@ -1,0 +1,316 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String             @id @default(uuid())
+  name            String             @db.VarChar(100)
+  email           String             @unique @db.VarChar(100)
+  password        String             @db.VarChar(255)
+  role            UserRole           @default(waiter)
+  active          Boolean            @default(true)
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
+  activityLogs    activity_logs[]    @relation("UserActivity")
+  deliveryDetails delivery_details[] @relation("UserDelivery")
+  notifications   Notification[]
+  createdOrders   Order[]            @relation("OrderCreatedBy")
+
+  @@map("users")
+}
+
+model Table {
+  id             String        @id @default(uuid())
+  number         Int           @unique
+  capacity       Int
+  status         TableStatus   @default(free)
+  currentOrderId String?       @map("current_order_id")
+  reservedBy     String?       @map("reserved_by") @db.VarChar(100)
+  reservedTime   DateTime?     @map("reserved_time")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+  groupId        String?       @map("group_id")
+  isPrimary      Boolean       @default(false) @map("is_primary")
+  orders         Order[]       @relation("TableOrders")
+  reservations   Reservation[] @relation("TableReservations")
+
+  @@map("tables")
+}
+
+model MenuItem {
+  id                 String                @id @default(uuid())
+  name               String                @db.VarChar(100)
+  category           String                @db.VarChar(50)
+  price              Decimal               @db.Decimal(10, 2)
+  description        String?
+  imageUrl           String?               @map("image_url") @db.VarChar(255)
+  available          Boolean               @default(true)
+  preparationTime    Int                   @default(0) @map("preparation_time")
+  createdAt          DateTime              @default(now()) @map("created_at")
+  updatedAt          DateTime              @updatedAt @map("updated_at")
+  categoryId         String?               @map("category_id")
+  availableFrom      String?               @map("available_from")
+  availableTo        String?               @map("available_to")
+  isVeg              Boolean               @default(true) @map("is_veg")
+  availabilityReason String?               @map("availability_reason")
+  menuItemModifiers  menu_item_modifiers[]
+  categories         categories?           @relation(fields: [categoryId], references: [id])
+  orderItems         OrderItem[]
+  recipes            recipes[]
+
+  @@map("menu_items")
+}
+
+model Order {
+  id                  String                 @id @default(uuid())
+  tableNumber         Int?                   @map("table_number")
+  status              OrderStatus            @default(pending)
+  createdBy           String                 @map("created_by")
+  total               Decimal                @default(0) @db.Decimal(10, 2)
+  discountType        String?                @map("discount_type") @db.VarChar(20)
+  discountValue       Decimal?               @default(0) @map("discount_value") @db.Decimal(10, 2)
+  isPaid              Boolean                @default(false) @map("is_paid")
+  paymentMethod       PaymentMethod?         @map("payment_method")
+  createdAt           DateTime               @default(now()) @map("created_at")
+  updatedAt           DateTime               @updatedAt @map("updated_at")
+  cancelReason        String?                @map("cancel_reason")
+  holdStatus          Boolean                @default(false) @map("hold_status")
+  orderNumber         Int                    @unique @default(autoincrement()) @map("order_number")
+  parentOrderId       String?                @map("parent_order_id")
+  deliveryDetails     delivery_details?      @relation("OrderDelivery")
+  orderItems          OrderItem[]
+  creator             User                   @relation("OrderCreatedBy", fields: [createdBy], references: [id])
+  parentOrder         Order?                 @relation("OrderHierarchy", fields: [parentOrderId], references: [id])
+  childOrders         Order[]                @relation("OrderHierarchy")
+  table               Table?                 @relation("TableOrders", fields: [tableNumber], references: [number])
+  paymentTransactions payment_transactions[] @relation("OrderPayments")
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         String      @id @default(uuid())
+  orderId    String      @map("order_id")
+  menuItemId String      @map("menu_item_id")
+  quantity   Int
+  notes      String?
+  status     OrderStatus @default(pending)
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+  modifiers  Json?       @default("[]")
+  menuItem   MenuItem    @relation(fields: [menuItemId], references: [id])
+  order      Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_items")
+}
+
+model Reservation {
+  id            String            @id @default(uuid())
+  tableNumber   Int               @map("table_number")
+  customerName  String            @map("customer_name")
+  customerPhone String?           @map("customer_phone")
+  date          DateTime          @db.Date
+  startTime     String            @map("start_time")
+  endTime       String            @map("end_time")
+  status        ReservationStatus @default(pending)
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  table         Table             @relation("TableReservations", fields: [tableNumber], references: [number])
+
+  @@map("reservations")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  type      NotificationType
+  message   String
+  userId    String           @map("user_id")
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now()) @map("created_at")
+  user      User             @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+model Settings {
+  id                      String   @id @default(uuid())
+  taxRate                 Decimal  @default(5.00) @map("tax_rate") @db.Decimal(5, 2)
+  currency                String   @default("₹") @db.VarChar(10)
+  restaurantName          String   @default("Restaurant") @map("restaurant_name") @db.VarChar(100)
+  discountPresets         Json     @default("[]") @map("discount_presets")
+  printerConfig           Json     @default("{}") @map("printer_config")
+  updatedAt               DateTime @updatedAt @map("updated_at")
+  businessHours           Json?    @map("business_hours")
+  enabledPaymentMethods   String[] @default(["cash", "card", "upi"]) @map("enabled_payment_methods")
+  receiptFooter           String   @default("Thank you for your business!") @map("receipt_footer")
+  gstNo                   String?  @map("gst_no") @db.VarChar(50)
+  restaurantAddress       String?  @map("restaurant_address")
+  taxEnabled              Boolean  @default(true) @map("tax_enabled")
+  notificationPreferences Json     @default("{}") @map("notification_preferences")
+  reservationGracePeriod  Int      @default(15) @map("reservation_grace_period")
+
+  @@map("settings")
+}
+
+model DailySales {
+  id                String   @id @default(uuid())
+  date              DateTime @unique @db.Date
+  totalSales        Decimal  @default(0) @map("total_sales") @db.Decimal(10, 2)
+  totalOrders       Int      @default(0) @map("total_orders")
+  averageOrderValue Decimal  @default(0) @map("average_order_value") @db.Decimal(10, 2)
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@map("daily_sales")
+}
+
+model activity_logs {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  action    String   @db.VarChar(100)
+  details   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation("UserActivity", fields: [userId], references: [id])
+}
+
+model categories {
+  id          String     @id @default(uuid())
+  name        String     @unique @db.VarChar(50)
+  description String?
+  isActive    Boolean    @default(true) @map("is_active")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  menuItems   MenuItem[]
+}
+
+model delivery_details {
+  id             String  @id @default(uuid())
+  orderId        String  @unique @map("order_id")
+  customerName   String  @map("customer_name")
+  customerPhone  String  @map("customer_phone")
+  address        String
+  driverId       String? @map("driver_id")
+  deliveryStatus String  @default("pending") @map("delivery_status")
+  driver         User?   @relation("UserDelivery", fields: [driverId], references: [id])
+  order          Order   @relation("OrderDelivery", fields: [orderId], references: [id])
+}
+
+model ingredients {
+  id                   String                 @id @default(uuid())
+  name                 String                 @unique
+  unit                 String
+  stock                Decimal                @default(0) @db.Decimal(10, 3)
+  minLevel             Decimal                @default(0) @map("min_level") @db.Decimal(10, 3)
+  createdAt            DateTime               @default(now()) @map("created_at")
+  updatedAt            DateTime               @updatedAt @map("updated_at")
+  purchase_order_items purchase_order_items[]
+  recipes              recipes[]
+}
+
+model menu_item_modifiers {
+  id         String   @id @default(uuid())
+  menuItemId String   @map("menu_item_id")
+  name       String
+  price      Decimal  @db.Decimal(10, 2)
+  available  Boolean  @default(true)
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+}
+
+model payment_transactions {
+  id            String        @id @default(uuid())
+  orderId       String        @map("order_id")
+  amount        Decimal       @db.Decimal(10, 2)
+  method        PaymentMethod
+  status        String
+  transactionId String?       @map("transaction_id")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  order         Order         @relation("OrderPayments", fields: [orderId], references: [id])
+}
+
+model purchase_order_items {
+  id              String          @id @default(uuid())
+  purchaseOrderId String          @map("purchase_order_id")
+  ingredientId    String          @map("ingredient_id")
+  quantity        Decimal         @db.Decimal(10, 3)
+  unitCost        Decimal         @map("unit_cost") @db.Decimal(10, 2)
+  ingredients     ingredients     @relation(fields: [ingredientId], references: [id])
+  purchase_orders purchase_orders @relation(fields: [purchaseOrderId], references: [id])
+}
+
+model purchase_orders {
+  id                   String                 @id @default(uuid())
+  supplierId           String                 @map("supplier_id")
+  status               String                 @default("pending")
+  totalCost            Decimal                @default(0) @map("total_cost") @db.Decimal(10, 2)
+  createdAt            DateTime               @default(now()) @map("created_at")
+  updatedAt            DateTime               @updatedAt @map("updated_at")
+  purchase_order_items purchase_order_items[]
+  suppliers            suppliers              @relation(fields: [supplierId], references: [id])
+}
+
+model recipes {
+  id           String      @id @default(uuid())
+  menuItemId   String      @map("menu_item_id")
+  ingredientId String      @map("ingredient_id")
+  quantity     Decimal     @db.Decimal(10, 3)
+  ingredients  ingredients @relation(fields: [ingredientId], references: [id])
+  menu_items   MenuItem    @relation(fields: [menuItemId], references: [id])
+}
+
+model suppliers {
+  id              String            @id @default(uuid())
+  name            String            @unique @db.VarChar(100)
+  contactName     String?           @map("contact_name")
+  email           String?
+  phone           String?
+  address         String?
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  purchase_orders purchase_orders[]
+}
+
+enum UserRole {
+  waiter
+  admin
+  kitchen
+  manager
+  delivery
+}
+
+enum TableStatus {
+  free
+  occupied
+  reserved
+}
+
+enum OrderStatus {
+  pending
+  preparing
+  ready
+  served
+  delivered
+  cancelled
+}
+
+enum PaymentMethod {
+  cash
+  card
+  upi
+}
+
+enum NotificationType {
+  order
+  payment
+  alert
+}
+
+enum ReservationStatus {
+  pending
+  checked_in
+  cancelled
+  expired
+}

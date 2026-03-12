@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Stitch Light Theme */
+    --background: 240 9% 97%;
+    /* #f6f6f8 */
+    --foreground: 220 14% 8%;
+    /* #121418 */
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 14% 8%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 14% 8%;
+
+    --primary: 220 85% 50%;
+    /* #135bec */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 10% 96%;
+    --secondary-foreground: 220 14% 8%;
+
+    --muted: 240 10% 96%;
+    --muted-foreground: 214 13% 40%;
+
+    --accent: 220 85% 96%;
+    --accent-foreground: 220 85% 50%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 145 63% 49%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 48 89% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 214 13% 85%;
+    /* Lighter for light mode */
+    --input: 214 13% 85%;
+    --ring: 220 85% 50%;
+
+    --radius: 0.75rem;
+
+    --sidebar: 0 0% 100%;
+  }
+
+  .dark {
+    /* Warm Luxury Theme (Charcoal/Amber) */
+    --background: 24 5% 6%;
+    /* #0c0a09 (Stone 950) */
+    --foreground: 30 5% 96%;
+    /* #fafaf9 (Stone 50) */
+
+    --card: 24 5% 10%;
+    /* #1c1917 (Stone 900) */
+    --card-foreground: 30 5% 96%;
+
+    --popover: 24 5% 10%;
+    --popover-foreground: 30 5% 96%;
+
+    --primary: 243 75% 59%;
+    /* #4f46e5 (Indigo 600 - Soft Royal Blue) */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 24 5% 26%;
+    /* #44403c (Stone 700) */
+    --secondary-foreground: 30 5% 96%;
+
+    --muted: 24 6% 15%;
+    /* Darker muted background */
+    --muted-foreground: 24 5% 64%;
+    /* #a8a29e (Stone 400) */
+
+    --accent: 36 90% 45%;
+    /* #d97706 (Amber 600 - Warm Copper) */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 24 5% 20%;
+    /* Warm Grey Border */
+    --input: 24 5% 20%;
+    --ring: 36 90% 45%;
+    /* Ring matches accent */
+
+    --sidebar: 0 0% 4%;
+    /* #0a0908 (Darker than BG) */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

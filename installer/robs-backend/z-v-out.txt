@@ -1,0 +1,15 @@
+Loaded Prisma config from prisma.config.ts.
+
+Prisma schema loaded from prisma\schema.prisma.
+prisma               : 7.2.0
+@prisma/client       : 7.2.0
+Operating System     : win32
+Architecture         : x64
+Node.js              : v20.19.6
+TypeScript           : 5.9.3
+Query Compiler       : enabled
+PSL                  : @prisma/prisma-schema-wasm 7.2.0-4.0c8ef2ce45c83248ab3df073180d5eda9e8be7a3
+Schema Engine        : schema-engine-cli 0c8ef2ce45c83248ab3df073180d5eda9e8be7a3 (at node_modules\@prisma\engines\schema-engine-windows.exe)
+Default Engines Hash : 0c8ef2ce45c83248ab3df073180d5eda9e8be7a3
+Studio               : 0.9.0
+DONE 

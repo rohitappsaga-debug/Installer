@@ -1,0 +1,18 @@
+Current CWD: Z:\installer\robs-backend
+Dirname: Z:\installer\robs-backend
+Testing access to: Z:\installer\node_modules\prisma\build\index.js
+FAILED: File does NOT exist.
+SUCCESS: node_modules exists.
+Sample node_modules: [
+  '.bin',
+  '.cache',
+  '.package-lock.json',
+  '.prisma',
+  '@alloc',
+  '@apidevtools',
+  '@babel',
+  '@bcoe',
+  '@chevrotain',
+  '@colors'
+]
+DONE 
